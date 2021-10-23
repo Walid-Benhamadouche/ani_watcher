@@ -1,4 +1,5 @@
 import 'package:oauth2_client/oauth2_client.dart';
+import 'package:oauth2_client/oauth2_helper.dart';
 
 ///////////////////////  Code  //////////////////////////////////////
 
@@ -14,20 +15,24 @@ class MyOAuth2Client extends OAuth2Client {
 }
 
 class Auth {
+  static var client = MyOAuth2Client(
+      redirectUri: 'com.desire.anime://auth',
+      customUriScheme: 'com.desire.anime');
+
+  static OAuth2Helper oauth2Helper = OAuth2Helper(
+    client,
+    grantType: OAuth2Helper.AUTHORIZATION_CODE,
+    clientId: '6771',
+    clientSecret: 'RQf3L2RaW1am3Gv2ssVZFnENODw4sBD74Tgy4crZ',
+  );
+
+  checkAccessToken() async {
+    var resp = await oauth2Helper.getTokenFromStorage();
+    return resp?.accessToken;
+  }
+
   getAccessToken() async {
-    var client = MyOAuth2Client(
-        redirectUri: 'com.desire.anime://auth',
-        customUriScheme: 'com.desire.anime');
-    try {
-      var tknResp = await client.getTokenWithAuthCodeFlow(
-        clientId: '6771',
-        clientSecret: 'RQf3L2RaW1am3Gv2ssVZFnENODw4sBD74Tgy4crZ',
-      );
-      print("tkn rsp ${tknResp}");
-      print("first ${tknResp.httpStatusCode}");
-      print("third ${tknResp.expirationDate}");
-      return tknResp;
-    } on Exception catch (_) {}
-    return null;
+    var resp = await oauth2Helper.getToken();
+    return resp?.accessToken;
   }
 }
