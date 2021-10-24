@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 
-import 'card.dart';
 import 'auth.dart';
 import 'authentication_controller.dart';
 import 'client.dart';
+import 'anime.dart';
+import 'graphql_requests.dart';
+
+import 'card.dart';
+import 'profile_card.dart';
 
 void main() async {
   runApp(MyApp());
@@ -30,10 +34,7 @@ class MyApp extends StatelessWidget {
       },
     );
 
-    return /*GraphQLProvider(
-        client: graphql.client,
-        child: */
-        MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -76,16 +77,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String name = '';
   int id = -1;
-  String query = '''
-                query { # Define which variables will be used in the query (id)
-                  Viewer { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
-                    id
-                    name
-                  }
-                }
-                ''';
+  String name = '';
+  String avatar = '';
+  String bannerImage = '';
+  var animelist = null;
+  //Map<dynamic, dynamic> animlist = Map<dynamic, dynamic>();
   @override
   void initState() {
     super.initState();
@@ -95,20 +92,45 @@ class _MyHomePageState extends State<MyHomePage> {
     await AuthenticationController.isTokenPresent();
     if (AuthenticationController.isAuthenticated) {
       var accessToken = await AuthenticationController.authenticate();
-      //print("auth $accessToken");
       await GQLClient.initClient(accessToken: accessToken);
-      final QueryOptions options = QueryOptions(
-        document: gql(query),
-      );
-      final QueryResult result = await GQLClient.client.query(options);
-      if (result.hasException) {
-        name = result.exception.toString();
+
+      QueryResult viewer = await GqlQuery.getViewer();
+      if (viewer.hasException) {
+        name = viewer.exception.toString();
       } else {
-        name = result.data?['Viewer']['name'];
+        id = viewer.data?['Viewer']['id'];
+        name = viewer.data?['Viewer']['name'];
+        avatar = viewer.data?['Viewer']['avatar']['medium'];
+        bannerImage = viewer.data?['Viewer']['bannerImage'];
+      }
+
+      QueryResult animeListRes = await GqlQuery.getAnimeList(id);
+      if (animeListRes.hasException) {
+      } else {
+        animelist = animeListRes.data?['MediaListCollection']['lists'][0]
+            ['entries'] as List<dynamic>;
       }
     } else {
       await GQLClient.initClient();
     }
+  }
+
+  List<Widget> animeListCreator(maxLine) {
+    List<Anime> animes = [];
+    for (var item in animelist) {
+      animes.add(Anime(item: item));
+    }
+    return animes
+        .map<Widget>((anime) => CardWidget(
+              imageLink: anime.imageLink,
+              animeName: anime.animeName,
+              episode: 'EP ${anime.episode}${anime.behind}/${anime.episodes}',
+              timeToNextEpisode: anime.timeToNextEpisodeString,
+              season:
+                  '${anime.seasonFormat} ${anime.season} ${anime.seasonYear}',
+              maxLine: maxLine,
+            ))
+        .toList();
   }
 
   Widget build(BuildContext context) {
@@ -151,101 +173,45 @@ class _MyHomePageState extends State<MyHomePage> {
                   int maxLine;
                   maxLine = orientation == Orientation.portrait ? 2 : 1;
                   return SafeArea(
-                    child: GridView.count(
-                      childAspectRatio: MediaQuery.of(context).size.width /
-                          (MediaQuery.of(context).size.height / 1.4),
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 1,
-                      mainAxisSpacing: 5,
-                      children: <Widget>[
-                        Container(
-                          //color: Colors.red,
-                          child: CardWidget(
-                            imageLink:
-                                "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx131586-k0X2kVpUOkqX.jpg",
-                            animeName: "86: Eighty Six Part 2",
-                            episode: "Ep 04",
-                            timeToNextEpisode: "3d 20h 41m",
-                            season: "TV Fall 2021",
-                            maxLine: maxLine,
-                          ),
-                        ),
-                        CardWidget(
-                          imageLink:
-                              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx127720-ADJgIrUVMdU9.jpg",
-                          animeName:
-                              "Mushoku Tensei: Isekai Ittara Honki Dasu Part 2gfdgjhfghjfhkjkjhlk",
-                          episode: "Ep 04",
-                          timeToNextEpisode: "3d 20h 41m",
-                          season: "TV Fall 2021",
-                          maxLine: maxLine,
-                        ),
-                        CardWidget(
-                          imageLink:
-                              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx3002-RhSiBs8HiP4g.png",
-                          animeName: "Gyakkyou Burai Kaiji: Ultimate Survivor",
-                          episode: "Ep 25",
-                          timeToNextEpisode: "",
-                          season: "TV Fall 2007",
-                          maxLine: maxLine,
-                        ),
-                        CardWidget(
-                          imageLink:
-                              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113596-LKA0bYJGjLnB.jpg",
-                          animeName: "Josee to Tora to Sakanatachi",
-                          episode: "Ep 01",
-                          timeToNextEpisode: "3d 20h 41m",
-                          season: "Movie Winter 2021",
-                          maxLine: maxLine,
-                        ),
-                        CardWidget(
-                          imageLink:
-                              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20670-3B1bxzAp0AUr.jpg",
-                          animeName: "Kuroshitsuji: Book of Murder",
-                          episode: "Ep 04",
-                          timeToNextEpisode: "",
-                          season: "OVA Fall 2014",
-                          maxLine: maxLine,
-                        ),
-                        CardWidget(
-                          imageLink:
-                              "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100268-SUZCprpenPzC.png",
-                          animeName: "Natsume Yuujinchou: Utsusemi ni Musubu",
-                          episode: "Ep 01",
-                          timeToNextEpisode: "",
-                          season: "Movie Fall 2018",
-                          maxLine: maxLine,
-                        ),
-                      ],
-                    ),
-                  );
+                      child: GridView.count(
+                    childAspectRatio: MediaQuery.of(context).size.width /
+                        (MediaQuery.of(context).size.height / 1.4),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 1,
+                    mainAxisSpacing: 5,
+                    children: animeListCreator(maxLine),
+                  ));
                 }),
                 drawer: Drawer(
-                    child: AuthenticationController.isAuthenticated
-                        ? Text("name: $name")
-                        : TextButton(
-                            style: ButtonStyle(
-                              foregroundColor:
-                                  MaterialStateProperty.all<Color>(Colors.blue),
-                            ),
-                            onPressed: () async {
-                              var accessToken = await Auth().getAccessToken();
-                              await GQLClient.initClient(
-                                  accessToken: accessToken);
-                              final QueryOptions options = QueryOptions(
-                                document: gql(query),
-                              );
-                              final QueryResult result =
-                                  await GQLClient.client.query(options);
-                              if (result.hasException) {
-                              } else {
-                                setState(() {
-                                  name = result.data?['Viewer']['name'];
-                                });
-                              }
-                            },
-                            child: const Text("Authenticate"),
-                          )));
+                    child: ListView(children: [
+                  AuthenticationController.isAuthenticated
+                      ? ProfileCard(
+                          avatar: avatar,
+                          bannerImage: bannerImage,
+                          name: name,
+                        )
+                      : TextButton(
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.blue),
+                          ),
+                          onPressed: () async {
+                            var accessToken = await Auth().getAccessToken();
+                            await GQLClient.initClient(
+                                accessToken: accessToken);
+
+                            final QueryResult result =
+                                await GqlQuery.getViewer();
+                            if (result.hasException) {
+                            } else {
+                              setState(() {
+                                name = result.data?['Viewer']['name'];
+                              });
+                            }
+                          },
+                          child: const Text("Authenticate"),
+                        )
+                ])));
           }
         });
   }
