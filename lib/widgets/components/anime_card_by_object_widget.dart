@@ -1,24 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CardWidget extends StatelessWidget {
-  final String imageLink;
-  final String animeName;
-  final String episode;
-  final String timeToNextEpisode;
-  final String season;
+import '../../src/anime.dart';
+
+class CardWidget extends StatefulWidget {
+  final int index;
+  CardWidget({required this.anime, required this.maxLine, required this.index});
+  final Anime anime;
   final int maxLine;
-  const CardWidget(
-      {required this.imageLink,
-      required this.animeName,
-      required this.episode,
-      required this.timeToNextEpisode,
-      required this.season,
-      required this.maxLine});
+
+  @override
+  _CardWidget createState() => _CardWidget();
+}
+
+class _CardWidget extends State<CardWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(left: 10, right: 10),
+      margin: const EdgeInsets.only(right: 10),
       semanticContainer: true,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -34,7 +32,8 @@ class CardWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                      image: NetworkImage(imageLink), fit: BoxFit.cover)),
+                      image: NetworkImage(widget.anime.imageLink),
+                      fit: BoxFit.cover)),
               child: null),
           Container(
               //width: 140,
@@ -56,10 +55,10 @@ class CardWidget extends StatelessWidget {
                     margin: const EdgeInsets.only(left: 2),
                     alignment: Alignment.topCenter,
                     child: RichText(
-                        maxLines: maxLine,
+                        maxLines: widget.maxLine,
                         overflow: TextOverflow.ellipsis,
                         text: TextSpan(
-                          text: animeName,
+                          text: widget.anime.animeName,
                           style: const TextStyle(
                               fontFamily: 'Roboto',
                               color: Color.fromARGB(225, 255, 255, 255),
@@ -70,7 +69,7 @@ class CardWidget extends StatelessWidget {
                   Container(
                     alignment: Alignment.center,
                     child: Text(
-                      episode + "    " + timeToNextEpisode,
+                      'EP ${widget.anime.episodes}',
                       style: const TextStyle(
                           fontFamily: 'Roboto',
                           color: Color.fromARGB(225, 255, 255, 255),
@@ -84,7 +83,7 @@ class CardWidget extends StatelessWidget {
                     child: Row(
                       children: [
                         Text(
-                          season,
+                          '${widget.anime.seasonFormat} ${widget.anime.season} ${widget.anime.seasonYear}',
                           style: const TextStyle(
                               fontFamily: 'Roboto',
                               color: Color.fromARGB(225, 255, 255, 255),
@@ -95,15 +94,6 @@ class CardWidget extends StatelessWidget {
                   )
                 ],
               )),
-          Container(
-              child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(10),
-              splashColor: Colors.black.withAlpha(20),
-              onTap: () {},
-            ),
-          ))
         ],
       ),
     );

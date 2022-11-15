@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:path_provider/path_provider.dart';
 
 class GQLClient {
-  static var _client = null;
+  static dynamic _client;
   static Future<void> initClient({accessToken = '', store}) async {
     if (_client == null) {
       final _httpLink = HttpLink(
