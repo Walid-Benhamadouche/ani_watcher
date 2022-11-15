@@ -7,12 +7,11 @@ This app uses the AniList API.
 ## Screenshots:
 
 <img src="images/Screenshot_2022-09-15-20-04-50-668_com.desire.anime.jpg" width="200" height="422"/>
-![Alt text](images/Screenshot_2022-09-15-20-04-50-668_com.desire.anime.jpg)
-![Alt text](images/Screenshot_2022-09-15-20-04-56-567_com.desire.anime.jpg)
-![Alt text](images/Screenshot_2022-09-15-20-05-21-148_com.desire.anime.jpg)
-![Alt text](images/Screenshot_2022-09-15-20-05-31-091_com.desire.anime.jpg)
-![Alt text](images/Screenshot_2022-09-15-20-05-34-304_com.desire.anime.jpg)
-![Alt text](images/Screenshot_2022-09-15-20-05-39-350_com.desire.anime.jpg)
+<img src="images/Screenshot_2022-09-15-20-04-56-567_com.desire.anime.jpg" width="200" height="422"/>
+<img src="images/Screenshot_2022-09-15-20-05-21-148_com.desire.anime.jpg" width="200" height="422"/>
+<img src="images/Screenshot_2022-09-15-20-05-31-091_com.desire.anime.jpg" width="200" height="422"/>
+<img src="images/Screenshot_2022-09-15-20-05-34-304_com.desire.anime.jpg" width="200" height="422"/>
+<img src="images/Screenshot_2022-09-15-20-05-39-350_com.desire.anime.jpg" width="200" height="422"/>
 
 ## Getting Started
 
