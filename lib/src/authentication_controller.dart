@@ -23,4 +23,9 @@ class AuthenticationController {
     String accessToken = await Auth().getAccessToken();
     return accessToken;
   }
+
+  static logOut() async {
+    _isAuthenticated = ValueNotifier(false);
+    Auth().removeToken();
+  }
 }

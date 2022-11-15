@@ -1,6 +1,16 @@
 # project_anime
 
-A new Flutter project.
+An android app that allows the user to check remaining time for episodes to release and update the status and current episode as well as play the next episode of a given anime if found in the device.
+
+This app uses the AniList API.
+
+Screenshots:
+![Alt text](images/Screenshot_2022-09-15-20-04-50-668_com.desire.anime.jpg?raw=true)
+![Alt text](images/Screenshot_2022-09-15-20-04-56-567_com.desire.anime.jpg?raw=true)
+![Alt text](images/Screenshot_2022-09-15-20-05-21-148_com.desire.anime.jpg?raw=true)
+![Alt text](images/Screenshot_2022-09-15-20-05-31-091_com.desire.anime.jpg?raw=true)
+![Alt text](images/Screenshot_2022-09-15-20-05-34-304_com.desire.anime.jpg?raw=true)
+![Alt text](images/Screenshot_2022-09-15-20-05-39-350_com.desire.anime.jpg?raw=true)
 
 ## Getting Started
 

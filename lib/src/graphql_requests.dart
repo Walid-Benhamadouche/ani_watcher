@@ -4,8 +4,8 @@ import 'client.dart';
 class GqlQuery {
   static Future<QueryResult> getViewer() async {
     String query = '''
-                query { # Define which variables will be used in the query (id)
-                  Viewer { # Insert our variables into the query arguments (id) (type: ANIME is hard-coded in the query)
+                query {
+                  Viewer {
                     id
                     name
                     siteUrl
@@ -29,6 +29,7 @@ class GqlQuery {
                     lists{
                       entries{
                           id
+                          score(format: POINT_10_DECIMAL)
                           media{
                             id
                             format
@@ -40,6 +41,7 @@ class GqlQuery {
                             meanScore
                             description
                             status
+                            synonyms
                             studios{
                               nodes{
                                 name
@@ -121,6 +123,24 @@ class GqlQuery {
     MutationOptions options = MutationOptions(
       document: gql(query),
       variables: <String, dynamic>{'id': id, 'progress': progress},
+    );
+
+    return await GQLClient.client.mutate(options);
+  }
+
+  static Future<QueryResult> saveMediaListEntryScore(id, score) async {
+    String query = r'''
+                mutation ($id: Int, $score: Float){
+                  SaveMediaListEntry(id: $id, score: $score){
+                    id
+                    score
+                  }
+                }
+    ''';
+
+    MutationOptions options = MutationOptions(
+      document: gql(query),
+      variables: <String, dynamic>{'id': id, 'score': score},
     );
 
     return await GQLClient.client.mutate(options);

@@ -12,6 +12,7 @@ class Anime {
   String? _userStatus;
   String? _synopsis;
   String? _status;
+  List<String>? _synonyms;
   List<dynamic>? _genres;
   List<dynamic>? _studios;
   int? _entryId;
@@ -22,10 +23,12 @@ class Anime {
   int? _episodes;
   int? _behind;
   int? _timeToNextEpisode;
+  double? _uScore;
 
   Anime({required item, boolV}) {
     final _media;
     if (!boolV){
+      _uScore = item['score'].toDouble();
       _media = item['media'];
     }
     else{
@@ -49,6 +52,13 @@ class Anime {
     _studios = _media['studios']['nodes'];
     _synopsis = _media['description'];
     _status = _media['status'];
+
+    if (_media['synonyms'] != null){
+      _synonyms = [];
+      for (var syn in _media['synonyms']){
+        _synonyms!.add(syn.toString());
+      }
+    }
 
     if (_media['episodes'] != null) {
       _episodes = _media['episodes'];
@@ -162,11 +172,20 @@ class Anime {
   }
 
   get behindInt {
+    if (_behind == null){
+      return 0;
+    }
     return _behind;
   }
 
   get timeToNextEpisode {
     return _timeToNextEpisode;
+  }
+
+  get synonyms {
+    _synonyms!.insert(0, _englishName!);
+    _synonyms!.insert(0, _romajiName!);
+    return _synonyms;
   }
 
   get timeToNextEpisodeString {
@@ -191,7 +210,12 @@ class Anime {
       return '';
     }
   }
+
+get uScore {
+  return _uScore;
 }
+}
+
 
 class AnimeList extends ChangeNotifier {
   List<List<Anime>> animes = [[], [], [], [], [], [], []];
@@ -218,12 +242,20 @@ class AnimeList extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateScore(type, index, score) {
+    animes[type][index]._uScore = score;
+    notifyListeners();
+  }
+
   void updateEpisode(type, index, episode) {
     int? temp = animes[type][index]._episode;
     animes[type][index]._episode = episode;
-    animes[type][index]._behind = animes[type][index]._behind! + (temp! - animes[type][index]._episode!);
-    if (animes[type][index]._behind! < 0 ){
-      animes[type][index]._behind = 0;
+    if (animes[type][index]._behind != null)
+    {
+      animes[type][index]._behind = animes[type][index]._behind! + (temp! - animes[type][index]._episode!);
+      if (animes[type][index]._behind! < 0 ){
+        animes[type][index]._behind = 0;
+      }
     }
     notifyListeners();
   }

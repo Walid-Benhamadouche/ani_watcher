@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../src/authentication_controller.dart';
+import '../../src/user_data.dart';
+
+import '../../src/client.dart';
 
 class DrawerC extends StatelessWidget {
   String bannerImage;
@@ -26,19 +32,19 @@ class DrawerC extends StatelessWidget {
                           Container(
                             alignment: Alignment.bottomLeft,
                             height: 192,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                     colors: [
-                                      Color.fromARGB(0, 255, 255, 255),
-                                      Color.fromARGB(230, 255, 255, 255)
+                                      Theme.of(context).hoverColor,
+                                      Theme.of(context).secondaryHeaderColor
                                     ],
-                                    begin: FractionalOffset(0.0, 0.0),
-                                    end: FractionalOffset(0.0, 1.0),
-                                    stops: [0.0, 1.0])),
+                                    begin: const FractionalOffset(0.0, 0.0),
+                                    end: const FractionalOffset(0.0, 1.0),
+                                    stops: const [0.0, 1.0])),
                             
                               child: Container(
                                 margin: const EdgeInsets.fromLTRB(12, 0, 0, 12),
-                                child: Text(name, style: const TextStyle(fontSize: 23),),
+                                child: Text(name, style: TextStyle(fontSize: 23, color: Theme.of(context).textSelectionTheme.cursorColor),),
                                 ),          
                           ),
                           Align(
@@ -58,45 +64,73 @@ class DrawerC extends StatelessWidget {
                         ],
                       ),
                         ListTile(
-                          title: Text('Currently watching', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.feed_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Currently watching', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
-                            Navigator.popAndPushNamed(context, '/');
+                            Navigator.popAndPushNamed(context, '/current');
                           },
                         ),
                         ListTile(
-                          title: Text('Plan to watch', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.bookmark_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Plan to watch', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/plans');
                           },
                         ),
                         ListTile(
-                          title: Text('On hold', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.pause_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('On hold', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/hold');
                           },
                         ),
                         ListTile(
-                          title: Text('Dropped', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.close_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Dropped', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/dropped');
                           },
                         ),
                         ListTile(
-                          title: Text('Completed', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.done_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Completed', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/completed');
                           },
                         ),
                         ListTile(
-                          title: Text('Seasons', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.calendar_today_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Seasons', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/seasons');
                           },
                         ),
                         ListTile(
-                          title: Text('Search', style: TextStyle(color: Colors.grey[700])),
+                          leading: Icon(Icons.search_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Search', style: TextStyle(color: Theme.of(context).indicatorColor)),
                           onTap: () async {
                             Navigator.popAndPushNamed(context, '/search');
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.download_sharp, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Download', style: TextStyle(color: Theme.of(context).indicatorColor)),
+                          onTap: () async {
+                            Navigator.popAndPushNamed(context, '/nyaa');
+                          },
+                        ),ListTile(
+                          leading: Icon(Icons.logout, color: Theme.of(context).iconTheme.color,),
+                          title: Text('Log out', style: TextStyle(color: Theme.of(context).indicatorColor)),
+                          onTap: () async {
+                            AuthenticationController.logOut();
+                            GQLClient.clientS(null);
+                            //await GQLClient.initClient();
+                            Provider.of<User>(context, listen: false).updateId(-1);
+                            Provider.of<User>(context, listen: false).updateName("");
+                            Provider.of<User>(context, listen: false).updateAvatar("");
+                            Provider.of<User>(context, listen: false).updateBannerImage("");
+                            Navigator.popUntil(context, (route) => route.isFirst);
+                            Navigator.popAndPushNamed(context, '/login');
                           },
                         ),
                 ]));

@@ -35,4 +35,8 @@ class Auth {
     var resp = await oauth2Helper.getToken();
     return resp?.accessToken;
   }
+
+  removeToken() async {
+    oauth2Helper.removeAllTokens();
+  }
 }

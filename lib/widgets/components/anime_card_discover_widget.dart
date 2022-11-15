@@ -21,7 +21,7 @@ class AnimeCardDiscover extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         children: [
     Card(
-      color: const Color.fromARGB(255, 233, 229, 229),
+      color: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
@@ -40,19 +40,20 @@ class AnimeCardDiscover extends StatelessWidget {
             //width: 150,
             flex: 50,
             child: Column(children: [
-              const Align(
+              Align(
                 alignment: Alignment.topLeft,
                 child: Text('Synopsis: ', 
                 style: TextStyle(fontWeight: FontWeight.bold, 
                 fontSize: 16.0, 
-                height: 1.2), 
+                height: 1.2,
+                color: Theme.of(context).textSelectionTheme.cursorColor), 
                 overflow: TextOverflow.ellipsis,),
               ),
               Expanded(child: Text((anime.synopsis ?? '').replaceAll(RegExp(
                     r"<[^>]*>",
                     multiLine: true,
                     caseSensitive: true
-                    ), '')),),
+                    ), ''), style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor),),),
               /*RichText(
                 maxLines: maxLine,
                 overflow: TextOverflow.ellipsis,

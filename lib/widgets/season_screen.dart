@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:graphql/client.dart';
 import 'package:provider/provider.dart';
 
-import '../src/authentication_controller.dart';
-import '../src/client.dart';
 import '../src/anime.dart';
+import '../src/user_data.dart';
 import '../src/graphql_requests.dart';
 
 import 'components/drawer_widget.dart';
 import 'components/search_widget.dart';
 import 'components/anime_card_discover_widget.dart';
+import 'components/shimer_loading_sreen_widget.dart';
 
+@immutable
 class SeasonScreen extends StatefulWidget {
-  SeasonScreen({required Key key, required this.title}) : super(key: key);
+  const SeasonScreen({required Key key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -23,10 +24,6 @@ class SeasonScreen extends StatefulWidget {
 class _SeasonScreenState extends State<SeasonScreen> {
   dynamic queryList;
   List<Anime> animelist = [];
-  int id = -1;
-  String name = '';
-  String avatar = '';
-  String bannerImage = '';
   String season = 'WINTER';
   DateTime now = DateTime.now();
   int year = 0;
@@ -37,21 +34,6 @@ class _SeasonScreenState extends State<SeasonScreen> {
   }
 
   Future initApp() async {
-    await AuthenticationController.isTokenPresent();
-    if (AuthenticationController.isAuthenticated) {
-      var accessToken = await AuthenticationController.authenticate();
-      await GQLClient.initClient(accessToken: accessToken);
-    
-      QueryResult viewer = await GqlQuery.getViewer();
-      if (viewer.hasException) {
-        name = viewer.exception.toString();
-      } else {
-        id = viewer.data?['Viewer']['id'];
-        name = viewer.data?['Viewer']['name'];
-        avatar = viewer.data?['Viewer']['avatar']['medium'];
-        bannerImage = viewer.data?['Viewer']['bannerImage'];
-      }
-    }
     QueryResult queryListRes =
         await GqlQuery.getSeasonAnimeList(season, year, false);
     if (queryListRes.hasException) {
@@ -79,7 +61,7 @@ class _SeasonScreenState extends State<SeasonScreen> {
         future: initApp(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(body: Container());
+            return ShimerLoadingScreen(type: 6,);
           } else {
             return Scaffold(
                 appBar: AppBar(
@@ -100,7 +82,7 @@ class _SeasonScreenState extends State<SeasonScreen> {
                     List<List<Anime>>temp = Provider.of<AnimeList>(context).animes;
                     return SafeArea(
                         child: RefreshIndicator(
-                          color: Colors.blue,
+                          color: Theme.of(context).highlightColor,
                             onRefresh: _refresh,
                             child: Column(children: [
                               Row(
@@ -111,43 +93,44 @@ class _SeasonScreenState extends State<SeasonScreen> {
                                       season = 'WINTER';
                                     });
                                     },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
                                       child: Text("Winter",
-                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),)
+                                    style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor)),)
                                     ),
                                   InkWell(
                                     onTap: () { setState(() {
                                       season = 'SPRING';
                                     });
                                     },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
                                       child: Text("Spring",
-                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),)
+                                    style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor)),)
                                     ),
                                   InkWell(
                                     onTap: () { setState(() {
                                       season = 'SUMMER';
                                     });
                                     },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
                                       child: Text("Summer",
-                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),)
+                                    style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor)),)
                                     ),
                                   InkWell(
                                     onTap: () { setState(() {
                                       season = 'FALL';
                                     });
                                     },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(12.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12.0),
                                       child: Text("Fall",
-                                    style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))))
+                                    style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor)))
                                     ),
                                   DropdownButton<String>(
                                       value: ' $year',
+                                      style: TextStyle(color: Theme.of(context).textSelectionTheme.cursorColor),
                                       onChanged: (String? val) {setState(() {
                                         year = int.parse(val!);
                                       });},
@@ -178,7 +161,10 @@ class _SeasonScreenState extends State<SeasonScreen> {
                             ),)])));
                   },
                 ),
-                drawer: DrawerC(bannerImage: bannerImage, name: name, avatar: avatar,)
+                drawer: DrawerC(
+                  bannerImage: Provider.of<User>(context, listen: false).bannerImage, 
+                  name: Provider.of<User>(context, listen: false).name, 
+                  avatar: Provider.of<User>(context, listen: false).avatar,),
                 );
           }
         });

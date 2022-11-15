@@ -18,13 +18,14 @@ class Search extends StatelessWidget {
                       cursorHeight: 20,
                       cursorWidth: 1,
                       obscureText: false,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Search anime',
-                        contentPadding: EdgeInsets.only(left: 10.0),
+                        hintStyle: TextStyle(color: Theme.of(context).iconTheme.color),
+                        contentPadding: const EdgeInsets.only(left: 10.0),
                         suffixIcon: Icon(
                           Icons.search_outlined,
-                          color: Colors.grey,
+                          color: Theme.of(context).iconTheme.color,
                         ),
                       ),
                     ),);
