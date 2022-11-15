@@ -23,7 +23,7 @@ class Auth {
     client,
     grantType: OAuth2Helper.AUTHORIZATION_CODE,
     clientId: '6771',
-    clientSecret: 'RQf3L2RaW1am3Gv2ssVZFnENODw4sBD74Tgy4crZ',
+    clientSecret: env.SECRET,
   );
 
   checkAccessToken() async {
