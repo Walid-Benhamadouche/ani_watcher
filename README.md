@@ -6,7 +6,7 @@ This app uses the AniList API.
 
 ## Screenshots:
 
-![Alt text](images/Screenshot_2022-09-15-20-04-50-668_com.desire.anime.jpg =200x422)
+![Alt text](images/Screenshot_2022-09-15-20-04-50-668_com.desire.anime.jpg =x422)
 ![Alt text](images/Screenshot_2022-09-15-20-04-56-567_com.desire.anime.jpg)
 ![Alt text](images/Screenshot_2022-09-15-20-05-21-148_com.desire.anime.jpg)
 ![Alt text](images/Screenshot_2022-09-15-20-05-31-091_com.desire.anime.jpg)
